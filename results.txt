@@ -1829,8 +1829,8 @@ for k in K:
             true_results = max(data_results)
             print(n, k, h, true_results, true_results*1.0/2**min(n,8))
             results.append((n, k, h, true_results, true_results*1.0/2**min(n,8)))
-            if true_results*1.0/2**min(n,8) < 0.9:
-                print "VC(0.9): "+str((n-1,k, h))
+            if true_results*1.0/2**min(n,8) < 0.5:
+                print "KVC(0.5): "+str((n-1,k, h))
                 print
                 break
     print "done"
