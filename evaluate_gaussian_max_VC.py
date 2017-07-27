@@ -1,6 +1,7 @@
 N = 60
-K = [2,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
+K = [6] #,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
 H = [1,2,3,4,5,6,7,8] #,32,128,512]
+max_l = 32
 
 import itertools
 import numpy
@@ -17,20 +18,16 @@ for k in K:
         for n in range(N):
             n += 1
             data_results = []
+            l_len = min(n-1,max_l-1)
             for r_data in range(20):
                 numpy.random.seed(r_data)
-                if False: #k == 1:
-                    data = [[d] for d in range(N)]
-                else:
-                    data = numpy.random.normal(size=[N,k])
+                data = numpy.random.normal(size=[N,k])
                 numpy.random.seed(0)
                 true_results = 0
-                if n <= 8:
-                    labellist = ["".join(item) for item in itertools.product("10", repeat=n)]
-                else:
-                    labellist = [bin(numpy.random.randint(2**(N+2)+1, 2**(N+2)+1+2**n))[-n:] for i in range(256)]
-                for labelstring in labellist:
-                    labels = [int(i) for i in labelstring]
+                for label_int in range(2**l_len):
+                    if max_l < n:
+                      label_int = numpy.random.randint(0, 2**(n-1))
+                    labels = [int(i) for i in bin(label_int * 2 + 2**(N+2))[-n:]]
                     d = data[:n]
                     converged = False
                     for r_mlp in range(20): #lbfgs
@@ -39,7 +36,6 @@ for k in K:
                             #activation='relu', solver="lbfgs",
                             activation='relu', solver="lbfgs",
                             alpha=0)
-                        #clf = MLPClassifier(hidden_layer_sizes=(1,), random_state=r, activation='identity', solver="lbfgs")
                         clf.fit(d, labels)
                         if (clf.predict(d) == labels).all():
                             true_results += 1
@@ -47,18 +43,16 @@ for k in K:
                             break
                     if not converged:
                       break
-                # true_results are always an even number!
-                true_results += true_results % 2
-                if true_results == 2**min(n,8):
+                if true_results == 2**l_len:
                     data_results.append(true_results)
                     break
                 if data_results and true_results > max(data_results):
-                    print(n, k, h, true_results, true_results*1.0/2**min(n,8), "intermediate", r_data, max(data_results)*1.0/2**min(n,8))
+                    print(n, k, h, true_results, true_results*1.0/2**l_len, "intermediate", r_data, max(data_results)*1.0/2**l_len)
                 data_results.append(true_results)
             true_results = max(data_results)
-            print(n, k, h, true_results, true_results*1.0/2**min(n,8))
-            results.append((n, k, h, true_results, true_results*1.0/2**min(n,8)))
-            if true_results*1.0/2**min(n,8) < 0.95:
+            print(n, k, h, true_results, true_results*1.0/2**l_len)
+            results.append((n, k, h, true_results, true_results*1.0/2**l_len))
+            if true_results*1.0/2**l_len < 0.95:
                 print "KVC(0.95): "+str((n-1,k, h))
                 print
                 break
