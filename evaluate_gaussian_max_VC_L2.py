@@ -1,5 +1,5 @@
 N = 60
-K = [2] #,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
+K = [3] #,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
 H = [1,2,3,4,5,6,7,8] #,32,128,512] 1,2,3,4,5,6,7,
 max_l = 15
 
@@ -19,7 +19,7 @@ for k in K:
             n += 1
             data_results = []
             l_len = min(n-1,max_l-1)
-            for r_data in range(20):
+            for r_data in range(40):
                 numpy.random.seed(r_data)
                 data = numpy.random.normal(size=[N,k])
                 numpy.random.seed(0)
@@ -30,9 +30,9 @@ for k in K:
                     labels = [int(i) for i in bin(label_int * 2 + 2**(N+2))[-n:]]
                     d = data[:n]
                     converged = False
-                    for r_mlp in range(20): #lbfgs
+                    for r_mlp in range(40): #lbfgs
                         clf = MLPClassifier(
-                            hidden_layer_sizes=(h,), random_state=r_mlp, 
+                            hidden_layer_sizes=(2,h), random_state=r_mlp, 
                             #activation='relu', solver="lbfgs",
                             activation='relu', solver="lbfgs",
                             alpha=0)

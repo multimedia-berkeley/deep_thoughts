@@ -1,4 +1,4 @@
-N = 100
+N = 120
 K = [5] #,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
 H = [8] #,32,128,512]
 max_l = 10
@@ -16,7 +16,7 @@ for k in K:
     for h in H:
         numpy.random.seed(0)
         for n in range(N):
-            if n<59:
+            if n<100:
               continue
             n += 1
             if n <= 2*(h-1)*(k-1)+k+1:
