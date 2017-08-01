@@ -1,7 +1,7 @@
-N = 80
+N = 100
 K = [5] #,3,4,5] #,2,3,4,5] #,4] #,3] #,4,5,6,7,8] #,9,10]
-H = [8] #,32,128,512] 1,2,3,4,5,6,7,
-max_l = 15
+H = [8] #,32,128,512]
+max_l = 10
 
 import itertools
 import numpy
@@ -19,6 +19,8 @@ for k in K:
             if n<59:
               continue
             n += 1
+            if n <= 2*(h-1)*(k-1)+k+1:
+              continue
             data_results = []
             l_len = min(n-1,max_l-1)
             for r_data in range(20):
@@ -43,9 +45,9 @@ for k in K:
                             true_results += 1
                             converged = True
                             break
-                    if not converged:
+                    if true_results >= 2**(l_len-1):
                       break
-                if true_results == 2**l_len:
+                if true_results >= 2**(l_len-1):
                     data_results.append(true_results)
                     break
                 if data_results and true_results > max(data_results):
@@ -54,7 +56,7 @@ for k in K:
             true_results = max(data_results)
             print(n, k, h, true_results, true_results*1.0/2**l_len)
             results.append((n, k, h, true_results, true_results*1.0/2**l_len))
-            if true_results*1.0/2**l_len < 0.95:
+            if true_results*1.0/2**l_len < 0.45:
                 print "KVC(0.95): "+str((n-1,k, h))
                 print
                 break
